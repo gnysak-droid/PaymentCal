@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173b36">
+  <title>PaymentCalcu - Wildrose Laundry</title>
+  <style>
+    :root {
+      --ink: #173b36;
+      --muted: #687872;
+      --paper: #fffdf8;
+      --cream: #f3efe5;
+      --line: #d9ded6;
+      --accent: #e27b47;
+      --accent-dark: #b6532b;
+      --mint: #dcebe2;
+      --success: #236b4f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 10%, #fff8de 0, transparent 32%), linear-gradient(135deg, #e7eee6, #f5eee3 58%, #f8dfc9);
+      font-family: Georgia, "Times New Roman", serif;
+      padding: 32px 18px 48px;
+    }
+
+    .shell { max-width: 980px; margin: auto; }
+    .masthead { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
+    .eyebrow { margin: 0 0 8px; color: var(--accent-dark); font: 700 12px/1.2 Arial, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(2.2rem, 6vw, 4.8rem); line-height: 0.9; letter-spacing: -0.04em; }
+    .tagline { max-width: 250px; margin: 0 0 4px; color: var(--muted); font: 14px/1.45 Arial, sans-serif; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); gap: 20px; align-items: start; }
+    .panel { background: rgba(255, 253, 248, 0.91); border: 1px solid rgba(23, 59, 54, 0.13); border-radius: 8px; box-shadow: 0 18px 50px rgba(45, 55, 42, 0.12); padding: 24px; }
+    .panel-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 20px; }
+    h2 { margin: 0; font-size: 1.45rem; }
+    .unit { color: var(--muted); font: 12px Arial, sans-serif; }
+    .field { margin-bottom: 18px; }
+    label, legend { display: block; margin-bottom: 7px; color: var(--ink); font: 700 12px/1.2 Arial, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+    input[type="number"] { width: 100%; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); padding: 12px; font: 16px Georgia, serif; }
+    input:focus { outline: 3px solid rgba(226, 123, 71, 0.24); border-color: var(--accent); }
+    .check-row { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--mint); font: 15px Georgia, serif; }
+    .check-row label { margin: 0; text-transform: none; letter-spacing: 0; font: inherit; }
+    input[type="checkbox"] { accent-color: var(--accent-dark); width: 17px; height: 17px; }
+    fieldset { border: 0; padding: 0; margin: 0 0 18px; }
+    .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .service-option { display: flex; align-items: center; gap: 7px; min-height: 42px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font: 13px Arial, sans-serif; cursor: pointer; }
+    .service-option label { margin: 0; font: inherit; letter-spacing: 0; text-transform: none; cursor: pointer; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .duvet { padding: 16px; background: #f7f3e9; border-left: 4px solid var(--accent); }
+    .duvet-row { display: grid; grid-template-columns: 1fr 100px; align-items: center; gap: 12px; margin-top: 10px; }
+    .duvet-row label { margin: 0; font: 14px Georgia, serif; letter-spacing: 0; text-transform: none; }
+    button { width: 100%; border: 0; border-radius: 4px; padding: 14px 18px; color: white; background: var(--accent-dark); font: 700 14px Arial, sans-serif; letter-spacing: 0.1em; cursor: pointer; transition: transform 160ms ease, background 160ms ease; }
+    button:hover { background: #8f3e22; transform: translateY(-1px); }
+    .receipt { position: sticky; top: 18px; background: var(--ink); color: #fffdf8; }
+    .receipt .panel-title { border-color: rgba(255,255,255,.2); }
+    .receipt .unit { color: #bcd0c5; }
+    .receipt-header { text-align: center; padding-bottom: 14px; margin-bottom: 12px; border-bottom: 2px dashed rgba(255,255,255,.28); font: 12px/1.5 Arial, sans-serif; color: #bcd0c5; }
+    .receipt-header h3 { margin: 0 0 5px; color: #fffdf8; font: 700 15px Georgia, serif; }
+    .receipt-label { margin-top: 8px; color: #f5bc7e; font: 700 12px Arial, sans-serif; letter-spacing: .12em; }
+    #receiptMeta { margin-top: 5px; font-size: 11px; }
+    #receiptDetails { min-height: 110px; font: 14px/1.5 Arial, sans-serif; }
+    .receipt-item { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .total-wrap { margin-top: 24px; padding-top: 18px; border-top: 2px solid var(--accent); }
+    .total-label { color: #bcd0c5; font: 11px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .total { margin-top: 5px; color: #f5bc7e; font-size: 2.6rem; line-height: 1; }
+    .pdf-btn { margin-top: 20px; background: #f5bc7e; color: var(--ink); }
+    .pdf-btn:hover { background: #ffd09c; }
+    .empty { color: #bcd0c5; font-style: italic; }
+    @media (max-width: 760px) {
+      body { padding: 24px 12px 36px; }
+      .masthead { display: block; }
+      .tagline { margin-top: 16px; }
+      .layout { grid-template-columns: 1fr; }
+      .receipt { position: static; }
+      .service-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media print {
+      body { padding: 0; background: white; }
+      .masthead, .form-panel, .pdf-btn { display: none; }
+      .layout, .receipt { display: block; }
+      .receipt { box-shadow: none; border: 0; color: #111; background: white; }
+      .receipt .panel-title, .receipt .unit, .total-label, .empty { color: #111; }
+      .receipt-header, .receipt-header h3, .receipt-label, #receiptMeta { color: #111; }
+      .receipt-item { border-color: #ddd; }
+      .total { color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Laundry & service invoice</p>
+        <h1>PaymentCalcu</h1>
+      </div>
+      <p class="tagline">Build a clear, itemized total in a few quick selections.</p>
+    </header>
+
+    <div class="layout">
+      <section class="panel form-panel" aria-labelledby="details-title">
+        <div class="panel-title"><h2 id="details-title">Order details</h2><span class="unit">CAD</span></div>
+
+        <div class="field check-row">
+          <input type="checkbox" id="pickup">
+          <label for="pickup">Pick up service <span>+$10.00</span></label>
+        </div>
+
+        <div class="field">
+          <label for="weight">Laundry weight (lb)</label>
+          <input type="number" id="weight" value="10" min="0" step="0.1">
+        </div>
+
+        <fieldset>
+          <legend>Additional services · price per 5 lb</legend>
+          <div class="service-grid">
+            <div class="service-option"><input type="checkbox" class="srv" id="softener" value="3" data-name="Softener"><label for="softener">Softener · $3</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="folding" value="5" data-name="Folding"><label for="folding">Folding · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="stain" value="5" data-name="Stain removal"><label for="stain">Stain removal · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="pet" value="5" data-name="Pet hair"><label for="pet">Pet hair · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="scent" value="4" data-name="Scent boost"><label for="scent">Scent boost · $4</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="odor" value="4" data-name="Odor removal"><label for="odor">Odor removal · $4</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="oxy" value="5" data-name="Oxygen bleach"><label for="oxy">Oxy bleach · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="hypo" value="5" data-name="Hypoallergenic"><label for="hypo">Hypoallergenic · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="wrinkle" value="3" data-name="Wrinkle release"><label for="wrinkle">Wrinkle release · $3</label></div>
+          </div>
+        </fieldset>
+
+        <div class="two-col field">
+          <div><label for="iron">Ironing · $4 each</label><input type="number" id="iron" value="0" min="0" step="1"></div>
+          <div><label for="hangers">Hangers · $1 each</label><input type="number" id="hangers" value="0" min="0" step="1"></div>
+        </div>
+
+        <fieldset class="duvet">
+          <legend>Duvet quantities</legend>
+          <div class="duvet-row"><label for="dvS">Single · $15</label><input type="number" id="dvS" value="0" min="0" step="1"></div>
+          <div class="duvet-row"><label for="dvQ">Queen · $20</label><input type="number" id="dvQ" value="0" min="0" step="1"></div>
+          <div class="duvet-row"><label for="dvK">King · $25</label><input type="number" id="dvK" value="0" min="0" step="1"></div>
+        </fieldset>
+
+        <div class="field check-row">
+          <input type="checkbox" id="applyTax" checked>
+          <label for="applyTax">Apply 13% HST tax</label>
+        </div>
+        <button type="button" id="calculate">Calculate total</button>
+      </section>
+
+      <aside class="panel receipt" aria-live="polite" aria-labelledby="receipt-title">
+        <div class="panel-title"><h2 id="receipt-title">Receipt</h2><span class="unit">Preview</span></div>
+        <div class="receipt-header">
+          <h3>Wildrose Laundry Pick Up &amp; Delivery</h3>
+          <div>6048 Wildrose Cres.</div>
+          <div>Niagara Falls, L2G7T2, ON</div>
+          <div>Regd No: 1001610119</div>
+          <div class="receipt-label">RECEIPT</div>
+          <div id="receiptMeta"></div>
+        </div>
+        <div id="receiptDetails" class="empty">Your itemized total will appear here.</div>
+        <div class="total-wrap"><div class="total-label">Final total</div><div class="total" id="finalPrice">$0.00</div></div>
+        <button type="button" class="pdf-btn" id="print">Save as PDF</button>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const money = value => `$${value.toFixed(2)}`;
+    const quantity = id => Math.max(0, Number.parseFloat(document.getElementById(id).value) || 0);
+
+    function calculatePayment() {
+      const weight = quantity('weight');
+      const pickup = document.getElementById('pickup').checked ? 10 : 0;
+      const iron = quantity('iron');
+      const hangers = quantity('hangers');
+      const duvetSingle = quantity('dvS');
+      const duvetQueen = quantity('dvQ');
+      const duvetKing = quantity('dvK');
+      const serviceMultiplier = Math.ceil(weight / 5);
+      const wash = weight > 10 ? 10 + Math.ceil((weight - 10) / 5) * 5 : 10;
+      const receiptNumber = Math.floor(1000 + Math.random() * 9000);
+      const receiptDate = new Date().toISOString().split('T')[0];
+      const items = [{ name: `Base wash (${weight} lb${weight === 1 ? '' : 's'})`, value: wash }];
+
+      if (pickup) items.push({ name: 'Pick up service', value: pickup });
+      document.querySelectorAll('.srv:checked').forEach(service => items.push({ name: service.dataset.name, value: Number(service.value) * serviceMultiplier }));
+      if (iron) items.push({ name: `Ironing (${iron} pc${iron === 1 ? '' : 's'})`, value: iron * 4 });
+      if (hangers) items.push({ name: `Hangers (${hangers} pc${hangers === 1 ? '' : 's'})`, value: hangers });
+      if (duvetSingle) items.push({ name: `Duvet single (${duvetSingle})`, value: duvetSingle * 15 });
+      if (duvetQueen) items.push({ name: `Duvet queen (${duvetQueen})`, value: duvetQueen * 20 });
+      if (duvetKing) items.push({ name: `Duvet king (${duvetKing})`, value: duvetKing * 25 });
+
+      const subtotal = items.reduce((sum, item) => sum + item.value, 0);
+      const tax = document.getElementById('applyTax').checked ? subtotal * 0.13 : 0;
+      const rows = items.map(item => `<div class="receipt-item"><span>${item.name}</span><span>${money(item.value)}</span></div>`).join('');
+      const taxRow = `<div class="receipt-item"><span>${tax ? 'HST tax (13%)' : 'Tax-free'}</span><span>${money(tax)}</span></div>`;
+
+      document.getElementById('receiptMeta').textContent = `Receipt No: ${receiptNumber} | Date: ${receiptDate}`;
+      document.getElementById('receiptDetails').innerHTML = `${rows}<div class="receipt-item"><strong>Subtotal</strong><strong>${money(subtotal)}</strong></div>${taxRow}`;
+      document.getElementById('finalPrice').textContent = money(subtotal + tax);
+    }
+
+    document.getElementById('calculate').addEventListener('click', calculatePayment);
+    document.getElementById('print').addEventListener('click', () => window.print());
+    calculatePayment();
+  </script>
+</body>
+</html>
