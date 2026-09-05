@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#173b36">
   <title>PaymentCalcu - Wildrose Laundry</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --ink: #0f2b46;
@@ -120,7 +121,7 @@
         </div>
 
         <fieldset>
-          <legend>Additional services · price per 5 lb</legend>
+          <legend>Additional services · Price per 5 lb</legend>
           <div class="service-grid">
             <div class="service-option"><input type="checkbox" class="srv" id="softener" value="3" data-name="Softener"><label for="softener">Softener · $3</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="folding" value="5" data-name="Folding"><label for="folding">Folding · $5</label></div>
@@ -165,7 +166,7 @@
           <div id="receiptMeta"></div>
         </div>
         <div id="receiptDetails" class="empty">Your itemized total will appear here.</div>
-        <div class="total-wrap"><div class="total-label">Final total</div><div class="total" id="finalPrice">$0.00</div></div>
+        <div class="total-wrap"><div class="total-label">FINAL TOTAL</div><div class="total" id="finalPrice">$0.00</div></div>
         <div class="action-buttons">
           <button type="button" class="pdf-btn" id="print">Save PDF</button>
           <button type="button" class="share-btn" id="share">Share</button>
@@ -175,7 +176,6 @@
   </main>
 
   <script>
-    let lastReceiptText = '';
     const money = value => `$${value.toFixed(2)}`;
     const quantity = id => Math.max(0, Number.parseFloat(document.getElementById(id).value) || 0);
 
@@ -193,7 +193,6 @@
       const receiptNumber = Math.floor(10000 + Math.random() * 90000);
       const receiptDate = new Date().toISOString().split('T')[0];
       const items = [{ name: `Base wash (${weight} lb${weight === 1 ? '' : 's'})`, value: wash }];
-      let shareText = `--- Wildrose Laundry Receipt ---\nReceipt No: ${receiptNumber}\nDate: ${receiptDate}\n\n`;
 
       if (pickup) items.push({ name: 'Pick up service', value: pickup });
       document.querySelectorAll('.srv:checked').forEach(service => items.push({ name: service.dataset.name, value: Number(service.value) * serviceMultiplier }));
@@ -208,25 +207,58 @@
       const tax = document.getElementById('applyTax').checked ? subtotal * 0.13 : 0;
       const rows = items.map(item => `<div class="receipt-item"><span>${item.name}</span><span>${money(item.value)}</span></div>`).join('');
       const taxRow = `<div class="receipt-item"><span>${tax ? 'HST tax (13%)' : 'Tax-free'}</span><span>${money(tax)}</span></div>`;
-      shareText += items.map(item => `${item.name}: ${money(item.value)}`).join('\n');
-      shareText += `\nSubtotal: ${money(subtotal)}\n${tax ? `HST tax (13%): ${money(tax)}` : 'Tax: Tax-free ($0.00)'}\nFINAL TOTAL: ${money(subtotal + tax)}\n------------------------`;
-
       document.getElementById('receiptMeta').textContent = `Receipt No: ${receiptNumber} | Date: ${receiptDate}`;
       document.getElementById('receiptDetails').innerHTML = `${rows}<div class="receipt-item"><strong>Subtotal</strong><strong>${money(subtotal)}</strong></div>${taxRow}`;
       document.getElementById('finalPrice').textContent = money(subtotal + tax);
-      lastReceiptText = shareText;
     }
 
     document.getElementById('calculate').addEventListener('click', calculatePayment);
     document.getElementById('print').addEventListener('click', () => window.print());
-    document.getElementById('share').addEventListener('click', async () => {
-      if (navigator.share) {
-        await navigator.share({ title: 'Wildrose Laundry Receipt', text: lastReceiptText });
+    document.getElementById('share').addEventListener('click', sharePDFReceipt);
+
+    async function sharePDFReceipt() {
+      const element = document.querySelector('.receipt');
+      const actionButtons = element.querySelector('.action-buttons');
+      const fileName = 'Wildrose_Laundry_Receipt.pdf';
+
+      if (typeof html2pdf !== 'function') {
+        window.alert('PDF sharing is unavailable because the PDF library could not be loaded.');
         return;
       }
-      await navigator.clipboard.writeText(lastReceiptText);
-      window.alert('Receipt copied to clipboard! You can now paste it into WhatsApp or Messages.');
-    });
+
+      actionButtons.style.display = 'none';
+      const options = {
+        margin: 10,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+      };
+
+      try {
+        const pdfBlob = await html2pdf().from(element).set(options).outputPdf('blob');
+        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Wildrose Laundry Receipt',
+            text: 'Here is your receipt from Wildrose Laundry.'
+          });
+        } else {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(pdfBlob);
+          link.download = fileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }
+      } catch (error) {
+        console.error('PDF sharing error:', error);
+      } finally {
+        actionButtons.style.display = 'flex';
+      }
+    }
+
     calculatePayment();
   </script>
 </body>
