@@ -181,7 +181,9 @@
       const duvetKing = quantity('dvK');
       const serviceMultiplier = Math.ceil(weight / 5);
       const wash = weight > 10 ? 10 + Math.ceil((weight - 10) / 5) * 5 : 10;
-      const receiptNumber = Math.floor(1000 + Math.random() * 9000);
+      const storedReceiptNumber = window.localStorage.getItem('wildrose_receipt_seq');
+      const receiptNumber = storedReceiptNumber ? Number.parseInt(storedReceiptNumber, 10) + 1 : 1001;
+      window.localStorage.setItem('wildrose_receipt_seq', receiptNumber.toString());
       const receiptDate = new Date().toISOString().split('T')[0];
       const items = [{ name: `Base wash (${weight} lb${weight === 1 ? '' : 's'})`, value: wash }];
 
