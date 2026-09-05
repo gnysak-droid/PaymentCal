@@ -7,15 +7,14 @@
   <title>PaymentCalcu - Wildrose Laundry</title>
   <style>
     :root {
-      --ink: #173b36;
-      --muted: #687872;
-      --paper: #fffdf8;
-      --cream: #f3efe5;
-      --line: #d9ded6;
-      --accent: #e27b47;
-      --accent-dark: #b6532b;
-      --mint: #dcebe2;
-      --success: #236b4f;
+      --ink: #0f2b46;
+      --muted: #475569;
+      --paper: #ffffff;
+      --line: #cbd5e1;
+      --accent: #1d4ed8;
+      --accent-dark: #1e40af;
+      --mint: #e0f2fe;
+      --success: #16a34a;
     }
 
     * { box-sizing: border-box; }
@@ -24,7 +23,7 @@
       margin: 0;
       min-height: 100vh;
       color: var(--ink);
-      background: radial-gradient(circle at 15% 10%, #fff8de 0, transparent 32%), linear-gradient(135deg, #e7eee6, #f5eee3 58%, #f8dfc9);
+      background: #f0f7ff;
       font-family: Georgia, "Times New Roman", serif;
       padding: 32px 18px 48px;
     }
@@ -36,7 +35,7 @@
     .tagline { max-width: 250px; margin: 0 0 4px; color: var(--muted); font: 14px/1.45 Arial, sans-serif; }
 
     .layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); gap: 20px; align-items: start; }
-    .panel { background: rgba(255, 253, 248, 0.91); border: 1px solid rgba(23, 59, 54, 0.13); border-radius: 8px; box-shadow: 0 18px 50px rgba(45, 55, 42, 0.12); padding: 24px; }
+    .panel { background: #ffffff; border: 1px solid rgba(15, 43, 70, 0.13); border-radius: 8px; box-shadow: 0 18px 50px rgba(15, 43, 70, 0.15); padding: 24px; }
     .panel-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 20px; }
     h2 { margin: 0; font-size: 1.45rem; }
     .unit { color: var(--muted); font: 12px Arial, sans-serif; }
@@ -57,21 +56,25 @@
     .duvet-row label { margin: 0; font: 14px Georgia, serif; letter-spacing: 0; text-transform: none; }
     button { width: 100%; border: 0; border-radius: 4px; padding: 14px 18px; color: white; background: var(--accent-dark); font: 700 14px Arial, sans-serif; letter-spacing: 0.1em; cursor: pointer; transition: transform 160ms ease, background 160ms ease; }
     button:hover { background: #8f3e22; transform: translateY(-1px); }
-    .receipt { position: sticky; top: 18px; background: var(--ink); color: #fffdf8; }
-    .receipt .panel-title { border-color: rgba(255,255,255,.2); }
-    .receipt .unit { color: #bcd0c5; }
-    .receipt-header { text-align: center; padding-bottom: 14px; margin-bottom: 12px; border-bottom: 2px dashed rgba(255,255,255,.28); font: 12px/1.5 Arial, sans-serif; color: #bcd0c5; }
-    .receipt-header h3 { margin: 0 0 5px; color: #fffdf8; font: 700 15px Georgia, serif; }
-    .receipt-label { margin-top: 8px; color: #f5bc7e; font: 700 12px Arial, sans-serif; letter-spacing: .12em; }
+    .receipt { position: sticky; top: 18px; background: #ffffff; color: #1e293b; border: 2px solid var(--accent); }
+    .receipt .panel-title { border-color: var(--line); }
+    .receipt .unit { color: var(--muted); }
+    .receipt-header { text-align: center; padding-bottom: 14px; margin-bottom: 12px; border-bottom: 2px dashed var(--line); font: 12px/1.5 Arial, sans-serif; color: var(--muted); }
+    .receipt-header h3 { margin: 0 0 5px; color: var(--ink); font: 700 15px Georgia, serif; }
+    .receipt-label { margin-top: 8px; color: var(--ink); font: 700 12px Arial, sans-serif; letter-spacing: .12em; }
     #receiptMeta { margin-top: 5px; font-size: 11px; }
     #receiptDetails { min-height: 110px; font: 14px/1.5 Arial, sans-serif; }
-    .receipt-item { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .receipt-item { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; }
     .total-wrap { margin-top: 24px; padding-top: 18px; border-top: 2px solid var(--accent); }
-    .total-label { color: #bcd0c5; font: 11px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
-    .total { margin-top: 5px; color: #f5bc7e; font-size: 2.6rem; line-height: 1; }
-    .pdf-btn { margin-top: 20px; background: #f5bc7e; color: var(--ink); }
-    .pdf-btn:hover { background: #ffd09c; }
-    .empty { color: #bcd0c5; font-style: italic; }
+    .total-label { color: var(--ink); font: 11px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .total { margin-top: 5px; color: var(--success); font-size: 2.6rem; line-height: 1; }
+    .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
+    .pdf-btn, .share-btn { flex: 1; margin: 0; padding: 12px; color: white; border: 0; border-radius: 4px; font: 700 14px Arial, sans-serif; cursor: pointer; }
+    .pdf-btn { background: var(--success); }
+    .pdf-btn:hover { background: #15803d; }
+    .share-btn { background: #2563eb; }
+    .share-btn:hover { background: var(--accent-dark); }
+    .empty { color: var(--muted); font-style: italic; }
     @media (max-width: 760px) {
       body { padding: 24px 12px 36px; }
       .masthead { display: block; }
@@ -163,12 +166,16 @@
         </div>
         <div id="receiptDetails" class="empty">Your itemized total will appear here.</div>
         <div class="total-wrap"><div class="total-label">Final total</div><div class="total" id="finalPrice">$0.00</div></div>
-        <button type="button" class="pdf-btn" id="print">Save as PDF</button>
+        <div class="action-buttons">
+          <button type="button" class="pdf-btn" id="print">Save PDF</button>
+          <button type="button" class="share-btn" id="share">Share</button>
+        </div>
       </aside>
     </div>
   </main>
 
   <script>
+    let lastReceiptText = '';
     const money = value => `$${value.toFixed(2)}`;
     const quantity = id => Math.max(0, Number.parseFloat(document.getElementById(id).value) || 0);
 
@@ -183,11 +190,10 @@
       const duvetKing = quantity('dvK');
       const serviceMultiplier = Math.ceil(weight / 5);
       const wash = weight > 10 ? 10 + Math.ceil((weight - 10) / 5) * 5 : 10;
-      const storedReceiptNumber = window.localStorage.getItem('wildrose_receipt_seq');
-      const receiptNumber = storedReceiptNumber ? Number.parseInt(storedReceiptNumber, 10) + 1 : 1001;
-      window.localStorage.setItem('wildrose_receipt_seq', receiptNumber.toString());
+      const receiptNumber = Math.floor(10000 + Math.random() * 90000);
       const receiptDate = new Date().toISOString().split('T')[0];
       const items = [{ name: `Base wash (${weight} lb${weight === 1 ? '' : 's'})`, value: wash }];
+      let shareText = `--- Wildrose Laundry Receipt ---\nReceipt No: ${receiptNumber}\nDate: ${receiptDate}\n\n`;
 
       if (pickup) items.push({ name: 'Pick up service', value: pickup });
       document.querySelectorAll('.srv:checked').forEach(service => items.push({ name: service.dataset.name, value: Number(service.value) * serviceMultiplier }));
@@ -202,14 +208,25 @@
       const tax = document.getElementById('applyTax').checked ? subtotal * 0.13 : 0;
       const rows = items.map(item => `<div class="receipt-item"><span>${item.name}</span><span>${money(item.value)}</span></div>`).join('');
       const taxRow = `<div class="receipt-item"><span>${tax ? 'HST tax (13%)' : 'Tax-free'}</span><span>${money(tax)}</span></div>`;
+      shareText += items.map(item => `${item.name}: ${money(item.value)}`).join('\n');
+      shareText += `\nSubtotal: ${money(subtotal)}\n${tax ? `HST tax (13%): ${money(tax)}` : 'Tax: Tax-free ($0.00)'}\nFINAL TOTAL: ${money(subtotal + tax)}\n------------------------`;
 
       document.getElementById('receiptMeta').textContent = `Receipt No: ${receiptNumber} | Date: ${receiptDate}`;
       document.getElementById('receiptDetails').innerHTML = `${rows}<div class="receipt-item"><strong>Subtotal</strong><strong>${money(subtotal)}</strong></div>${taxRow}`;
       document.getElementById('finalPrice').textContent = money(subtotal + tax);
+      lastReceiptText = shareText;
     }
 
     document.getElementById('calculate').addEventListener('click', calculatePayment);
     document.getElementById('print').addEventListener('click', () => window.print());
+    document.getElementById('share').addEventListener('click', async () => {
+      if (navigator.share) {
+        await navigator.share({ title: 'Wildrose Laundry Receipt', text: lastReceiptText });
+        return;
+      }
+      await navigator.clipboard.writeText(lastReceiptText);
+      window.alert('Receipt copied to clipboard! You can now paste it into WhatsApp or Messages.');
+    });
     calculatePayment();
   </script>
 </body>
