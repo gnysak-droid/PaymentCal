@@ -51,7 +51,7 @@
     .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .service-option { display: flex; align-items: center; gap: 7px; min-height: 42px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font: 13px Arial, sans-serif; cursor: pointer; }
     .service-option label { margin: 0; font: inherit; letter-spacing: 0; text-transform: none; cursor: pointer; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .two-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .duvet { padding: 16px; background: #f7f3e9; border-left: 4px solid var(--accent); }
     .duvet-row { display: grid; grid-template-columns: 1fr 100px; align-items: center; gap: 12px; margin-top: 10px; }
     .duvet-row label { margin: 0; font: 14px Georgia, serif; letter-spacing: 0; text-transform: none; }
@@ -122,7 +122,7 @@
             <div class="service-option"><input type="checkbox" class="srv" id="softener" value="3" data-name="Softener"><label for="softener">Softener · $3</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="folding" value="5" data-name="Folding"><label for="folding">Folding · $5</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="stain" value="5" data-name="Stain removal"><label for="stain">Stain removal · $5</label></div>
-            <div class="service-option"><input type="checkbox" class="srv" id="pet" value="5" data-name="Pet hair"><label for="pet">Pet hair · $5</label></div>
+            <div class="service-option"><input type="checkbox" class="srv" id="pet" value="2" data-name="Pet hair removal"><label for="pet">Pet hair removal · $2</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="scent" value="4" data-name="Scent boost"><label for="scent">Scent boost · $4</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="odor" value="4" data-name="Odor removal"><label for="odor">Odor removal · $4</label></div>
             <div class="service-option"><input type="checkbox" class="srv" id="oxy" value="5" data-name="Oxygen bleach"><label for="oxy">Oxy bleach · $5</label></div>
@@ -134,6 +134,7 @@
         <div class="two-col field">
           <div><label for="iron">Ironing · $4 each</label><input type="number" id="iron" value="0" min="0" step="1"></div>
           <div><label for="hangers">Hangers · $1 each</label><input type="number" id="hangers" value="0" min="0" step="1"></div>
+          <div><label for="shoes">Shoe pair · $10 each</label><input type="number" id="shoes" value="0" min="0" step="1"></div>
         </div>
 
         <fieldset class="duvet">
@@ -176,6 +177,7 @@
       const pickup = document.getElementById('pickup').checked ? 10 : 0;
       const iron = quantity('iron');
       const hangers = quantity('hangers');
+      const shoes = quantity('shoes');
       const duvetSingle = quantity('dvS');
       const duvetQueen = quantity('dvQ');
       const duvetKing = quantity('dvK');
@@ -191,6 +193,7 @@
       document.querySelectorAll('.srv:checked').forEach(service => items.push({ name: service.dataset.name, value: Number(service.value) * serviceMultiplier }));
       if (iron) items.push({ name: `Ironing (${iron} pc${iron === 1 ? '' : 's'})`, value: iron * 4 });
       if (hangers) items.push({ name: `Hangers (${hangers} pc${hangers === 1 ? '' : 's'})`, value: hangers });
+      if (shoes) items.push({ name: `Shoe pair (${shoes} pc${shoes === 1 ? '' : 's'})`, value: shoes * 10 });
       if (duvetSingle) items.push({ name: `Duvet single (${duvetSingle})`, value: duvetSingle * 15 });
       if (duvetQueen) items.push({ name: `Duvet queen (${duvetQueen})`, value: duvetQueen * 20 });
       if (duvetKing) items.push({ name: `Duvet king (${duvetKing})`, value: duvetKing * 25 });
