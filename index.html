@@ -219,7 +219,8 @@
     async function sharePDFReceipt() {
       const element = document.querySelector('.receipt');
       const actionButtons = element.querySelector('.action-buttons');
-      const fileName = 'Wildrose_Laundry_Receipt.pdf';
+        await new Promise(resolve => setTimeout(resolve, 200));
+        const fileName = 'Wildrose_Laundry_Receipt.pdf';
 
       if (typeof html2pdf !== 'function') {
         window.alert('PDF sharing is unavailable because the PDF library could not be loaded.');
@@ -231,7 +232,13 @@
         margin: 10,
         filename: fileName,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          scrollY: 0,
+          scrollX: 0
+        },
         jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
       };
 
